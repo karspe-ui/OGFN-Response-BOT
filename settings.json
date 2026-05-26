@@ -1,0 +1,39 @@
+{
+
+  "version": "", 
+
+  "supportedPlatforms": {
+    "ios": false,
+    "android": false
+  },
+
+  "discordToken": "",
+
+  "ignoredRoleIds": [],
+
+  "autoDelete": {
+    "enabled": false,
+    "afterSeconds": 30
+  },
+
+  "channels": {
+    "supportServerInviteUrl": "",
+
+    "helpChannelUrl": "",
+
+    "supportChannelUrl": "",
+    "appealsChannelUrl": "",
+
+    "creatorProgramUrl": "",
+    "donationsUrl": "",
+    "reportsUrl": "",
+
+    "learnMoreSafetyUrl": ""
+  },
+
+  "embeds": {
+    "brandName": ",
+    "brandUrl": ""
+  }
+}
+
