@@ -1,8 +1,10 @@
 import { Client, GatewayIntentBits, Message } from 'discord.js';
-import AutoResponseRules from './Response';
-import settings from '../settings.json';
+import AutoResponseRules from './Response.js';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const config = settings as any;
+const configPath = join(process.cwd(), 'settings.json');
+const config = JSON.parse(readFileSync(configPath, 'utf-8')) as any;
 
 const DiscordToken = config.discordToken;
 const IgnoredRoles = config.ignoredRoleIds ?? [];
@@ -65,9 +67,7 @@ client
   .login(DiscordToken)
   .catch((err) => {
     console.error('Failed to login:', err);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (String((err as any)?.message ?? '').includes('TOKEN_INVALID')) {
       console.error('Your bot token is invalid. Get it from: https://discord.com/developers/applications');
     }
   });
-
