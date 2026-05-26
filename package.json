@@ -1,12 +1,12 @@
 {
   "name": "og-fortnite-autoresponse-bot",
   "version": "1.0.0",
-  "main": "dist/Discord Bot/Index.js",
+  "main": "dist/DiscordBot/Index.js",
   "type": "commonjs",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node \"dist/Discord Bot/Index.js\"",
-    "dev": "ts-node \"./Discord Bot/Index.ts\""
+    "start": "node dist/DiscordBot/Index.js",
+    "dev": "ts-node ./DiscordBot/Index.ts"
   },
   "dependencies": {
     "discord.js": "^14.14.1"
