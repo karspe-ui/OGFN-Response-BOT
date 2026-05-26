@@ -5,8 +5,8 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/Discord Bot/Index.js",
-    "dev": "ts-node ./Discord Bot/Index.ts"
+    "start": "node \"dist/Discord Bot/Index.js\"",
+    "dev": "ts-node \"./Discord Bot/Index.ts\""
   },
   "dependencies": {
     "discord.js": "^14.14.1"
@@ -17,4 +17,3 @@
     "@types/node": "^20.14.10"
   }
 }
-
