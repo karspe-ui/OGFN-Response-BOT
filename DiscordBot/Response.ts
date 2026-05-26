@@ -1,192 +1,57 @@
-import { EmbedBuilder } from 'discord.js';
-import settings from '../settings.json';
+import { Client, GatewayIntentBits, Message } from 'discord.js';
 
-const config = settings as any;
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
+});
 
-export type AutoResponseRule = (message: string) => EmbedBuilder | null;
-
-const brandName: string = config.embeds?.brandName ?? 'Gilded';
-const brandUrl: string = config.embeds?.brandUrl ?? 'https://gildedfn.dev/';
-
-const helpChannelUrl: string =
-  config.channels?.helpChannelUrl ?? 'https://discord.com/channels/YOUR_SERVER/YOUR_HELP_CHANNEL';
-const learnMoreSafetyUrl: string =
-  config.channels?.learnMoreSafetyUrl ?? 'https://discord.com/channels/YOUR_SERVER/YOUR_SAFETY_CHANNEL';
-
-const creatorProgramUrl: string =
-  config.channels?.creatorProgramUrl ?? 'https://discord.com/channels/YOUR_SERVER/YOUR_CREATOR_CHANNEL';
-const donationsUrl: string =
-  config.channels?.donationsUrl ?? 'https://discord.com/channels/YOUR_SERVER/YOUR_DONATIONS_CHANNEL';
-
-const reportsUrl: string =
-  config.channels?.reportsUrl ?? 'https://discord.com/channels/YOUR_SERVER/YOUR_REPORTS_CHANNEL';
-
-const supportChannelUrl: string =
-  config.channels?.supportChannelUrl ?? helpChannelUrl;
-const appealsChannelUrl: string =
-  config.channels?.appealsChannelUrl ?? helpChannelUrl;
-
-
-function baseEmbed(color: string, title: string, description: string) {
-  const embed = new EmbedBuilder()
-    .setColor(color)
-    .setTitle(title)
-    .setDescription(description)
-    .setFooter({ text: `Powered by ${brandName}` })
-    .setURL(brandUrl);
-
-  return embed;
-}
-
-function includesAny(haystack: string, needles: string[]) {
-  return needles.some((n) => haystack.includes(n));
-}
-
-const AutoResponseRules: AutoResponseRule[] = [
-  
-  // 1. MOBILE / ANDROID STATUS
-  function (message) {
-    const msg = message.toLowerCase();
-    const talksMobile = includesAny(msg, [
-      'android', 'mobile', 'phone', 'on android', 'on mobile', 'apk', 'ios', 'iphone', 'ipad', 'switch', 'console'
-    ]);
-    const talksBroken = includesAny(msg, [
-      'not working', "doesnt work", "doesn't work", 'dont work', 'wont work', 'won\'t work',
-      'broken', 'crash', 'crashing', 'issues', 'issue', 'problems', 'problem', 'error', 
-      'not supported', 'black screen', 'freeze', 'freezing', 'close', 'closing', 'kick', 'kicking'
-    ]);
-
-    if (talksMobile && talksBroken) {
-      return baseEmbed(
-        '#FFB020',
-        '📱 Mobile / Android Status',
-        '**Android/mobile is not supported on this build (12.41).**\n\nCrashes and errors are expected on Android for this version.'
-      ).addFields(
-        {
-          name: '✅ Best Option',
-          value: 'Use **Windows** for the most stable experience.'
-        },
-        {
-          name: '🧩 Getting Help',
-          value: `If you still need assistance, open a thread here: ${helpChannelUrl}`
-        },
-        {
-          name: '🔁 Updates',
-          value: 'We’ll announce when mobile is supported again.'
-        }
-      );
+client.once('ready', () => {
+    if (client.user) {
+        console.log(`🤖 OGFN Autoresponse Bot is online as ${client.user.tag}!`);
     }
-    return null;
-  },
+});
 
-  // 2. GENERAL HELP / SUPPORT
-  function (message) {
-    const msg = message.toLowerCase();
-    if (includesAny(msg, [
-      'i need help', 'need help', 'help me', 'please help', 'help pls', 'help', 'halp', 
-      'how to fix', 'fix this', 'any fix', 'stuck on', 'not loading', 'how do i', 'can someone help'
-    ])) {
-      return baseEmbed(
-        '#FF6B6B',
-        '💬 Need Help?',
-        '**Tell us what you’re stuck on** and we’ll guide you to the right fix.'
-      ).addFields(
-        {
-          name: '📝 Include',
-          value: 'Device/PC type + what you tried + any screenshots/errors (if available).'
-        },
-        {
-          name: '📍 Support channel',
-          value: `Start here: ${supportChannelUrl}`
-        }
-      );
-    }
-    return null;
-  },
+client.on('messageCreate', async (message: Message) => {
+    if (message.author.bot) return;
 
-  // 3. ANTI-VIRUS / SAFETY
-  function (message) {
-    const msg = message.toLowerCase();
-    const looksAv = includesAny(msg, [
-      'is this a virus', 'is a virus', 'is this safe', 'is it safe', 'antivirus', 'anti-virus',
-      'defender', 'malware', 'trojan', 'miner', 'flagged', 'false positive', 'falsepositive', 
-      'unsafe', 'rat', 'download safe', 'virus', 'threat', 'blocked', 'windows defender', 'avast', 'mcafee'
-    ]);
+    const cleanContent = message.content.toLowerCase();
+    const words = cleanContent.split(/\s+/); 
 
-    if (looksAv) {
-      return baseEmbed(
-        '#4ECDC4',
-        '🛡️ Anti‑Virus / Safety',
-        '**Detections can happen.**\nIn most cases you do **not** have to disable protection entirely.'
-      ).addFields(
-        {
-          name: '✅ Recommended',
-          value: `Read our safety guidance: ${learnMoreSafetyUrl}`
-        },
-        {
-          name: '⚙️ If it breaks',
-          value: 'If the tool fails to launch because of detection, you may need to temporarily allow/disable in your AV settings (only as needed).'
-        },
-        {
-          name: '🚨 False Alarm Warning',
-          value: `Many OG Fortnite projects get similar flags. (${brandName})`
-        }
-      );
+    if (words.some(word => ['iphone', 'apk', 'phone', 'android', 'ios'].includes(word))) {
+        await message.reply(
+            "📱 **OGFN Mobile Support:**\n" +
+            "• For **Android**, make sure you download the official client APK.\n" +
+            "• For **iOS/iPhone**, ensure your sideloading tool (AltStore, Scarlet, etc.) is fully updated and trusted in your device settings."
+        );
+        return;
     }
 
-    return null;
-  },
-
-  // 4. REPORTING CHEATERS / APPEALS
-  function (message) {
-    const msg = message.toLowerCase();
-    const wantsReport = includesAny(msg, [
-      'cheater', 'cheaters', 'hacker', 'hackers', 'report', 'report player', 'report cheater', 
-      'cheat', 'cheating', 'aimbot', 'softaim', 'wallhack', 'hax', 'hacking', 'banned', 'ban this', 'exploit'
-    ]);
-
-    if (wantsReport) {
-      return baseEmbed(
-        '#E74C3C',
-        '🎯 Reporting Cheaters',
-        '**Thank you for helping keep things fair.**\n\nThere is **no report command**—please submit via the channels below.'
-      ).addFields(
-        {
-          name: '📍 Submit Evidence',
-          value: `Main report channel: ${reportsUrl}`
-        },
-        {
-          name: '🧾 Include',
-          value: 'Player IGN + timestamps + video/screenshot evidence (if you have it).'
-        },
-        {
-          name: '🕊️ Appeal Ticket',
-          value: `If you were falsely reported/banned: ${appealsChannelUrl}`
-        }
-      );
+    if (cleanContent.includes("wont work") || cleanContent.includes("doesn't work") || cleanContent.includes("doesnt work")) {
+        await message.reply(
+            "❌ **Is something failing?**\n" +
+            "Please double check that your backend port management is correct, your DLL injection was successful, and verify your anti-virus isn't blocking the OGFN launcher files."
+        );
+        return;
     }
 
-    return null;
-  },
-
-  // 5. DONATIONS / CREATOR PROGRAM
-  function (message) {
-    const msg = message.toLowerCase();
-    if (includesAny(msg, [
-      'donate', 'donation', 'support the project', 'support', 'creator program', 'donating', 
-      'buy role', 'supporter', 'pay', 'paypal', 'crypto', 'patreon', 'cc code', 'creator code', 'sac'
-    ])) {
-      return baseEmbed(
-        '#2ECC71',
-        '✨ Support / Donations',
-        '**Thanks for supporting the project.**'
-      ).addFields(
-        { name: '📍 Donate', value: donationsUrl },
-        { name: '👑 Creator Program', value: creatorProgramUrl }
-      );
+    if (words.includes('cheating') || words.includes('cheat')) {
+        await message.reply("⚠️ **Rule Reminder:** Discussing or sharing cheats, hacks, or macro exploits is strictly prohibited on this server.");
+        return;
     }
-    return null;
-  }
-];
 
-export default AutoResponseRules;
+    if (words.includes('donate') || words.includes('donation')) {
+        await message.reply("💖 Thank you for supporting the OGFN project! Check the pinned messages or our official channels for the donation link.");
+        return;
+    }
+
+    if (words.includes('close')) {
+        await message.reply("🔒 If you are trying to close down your session safely, please use the exit shortcut inside the server launcher console.");
+        return;
+    }
+});
+
+const TOKEN = process.env.DISCORD_TOKEN || "YOUR_BOT_TOKEN_HERE";
+client.login(TOKEN);
