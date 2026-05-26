@@ -44,7 +44,7 @@ function includesAny(haystack: string, needles: string[]) {
 }
 
 const AutoResponseRules: AutoResponseRule[] = [
-  // 1) ANDROID/MOBILE NOT SUPPORTED
+  
   function (message) {
     const msg = message;
     const talksMobile = includesAny(msg, ['android', 'mobile', 'phone', 'on android', 'on mobile']);
@@ -87,7 +87,7 @@ const AutoResponseRules: AutoResponseRule[] = [
     return null;
   },
 
-  // 2) HELP
+  
   function (message) {
     const msg = message;
     if (includesAny(msg, ['i need help', 'need help', 'help me', 'please help', 'help pls', 'help'])) {
@@ -109,7 +109,7 @@ const AutoResponseRules: AutoResponseRule[] = [
     return null;
   },
 
-  // 3) ANTI-VIRUS / MAY NEED TO TURN OFF IF ERRORS
+  
   function (message) {
     const msg = message;
     const looksAv = includesAny(msg, [
@@ -150,7 +150,7 @@ const AutoResponseRules: AutoResponseRule[] = [
     return null;
   },
 
-  // 4) REPORTING CHEATERS (NO COMMAND)
+  
   function (message) {
     const msg = message;
     const wantsReport = includesAny(msg, [
@@ -188,8 +188,7 @@ const AutoResponseRules: AutoResponseRule[] = [
     return null;
   },
 
-  // 5) DONATIONS REMOVED (DONATING + LOST DONATIONS RULES)
-  // Instead we keep a single minimal “support” response.
+  
   function (message) {
     const msg = message;
     if (includesAny(msg, ['donate', 'donation', 'support the project', 'support', 'creator program'])) {
