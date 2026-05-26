@@ -27,7 +27,6 @@ const appealsChannelUrl: string =
   config.channels?.appealsChannelUrl ?? helpChannelUrl;
 
 
-
 function baseEmbed(color: string, title: string, description: string) {
   const embed = new EmbedBuilder()
     .setColor(color)
@@ -45,23 +44,16 @@ function includesAny(haystack: string, needles: string[]) {
 
 const AutoResponseRules: AutoResponseRule[] = [
   
+  // 1. MOBILE / ANDROID STATUS
   function (message) {
-    const msg = message;
-    const talksMobile = includesAny(msg, ['android', 'mobile', 'phone', 'on android', 'on mobile']);
+    const msg = message.toLowerCase();
+    const talksMobile = includesAny(msg, [
+      'android', 'mobile', 'phone', 'on android', 'on mobile', 'apk', 'ios', 'iphone', 'ipad', 'switch', 'console'
+    ]);
     const talksBroken = includesAny(msg, [
-      'not working',
-      "doesnt work",
-      "doesn't work",
-      'dont work',
-      'wont work',
-      'broken',
-      'crash',
-      'crashing',
-      'issues',
-      'issue',
-      'problems',
-      'error',
-      'not supported'
+      'not working', "doesnt work", "doesn't work", 'dont work', 'wont work', 'won\'t work',
+      'broken', 'crash', 'crashing', 'issues', 'issue', 'problems', 'problem', 'error', 
+      'not supported', 'black screen', 'freeze', 'freezing', 'close', 'closing', 'kick', 'kicking'
     ]);
 
     if (talksMobile && talksBroken) {
@@ -87,10 +79,13 @@ const AutoResponseRules: AutoResponseRule[] = [
     return null;
   },
 
-  
+  // 2. GENERAL HELP / SUPPORT
   function (message) {
-    const msg = message;
-    if (includesAny(msg, ['i need help', 'need help', 'help me', 'please help', 'help pls', 'help'])) {
+    const msg = message.toLowerCase();
+    if (includesAny(msg, [
+      'i need help', 'need help', 'help me', 'please help', 'help pls', 'help', 'halp', 
+      'how to fix', 'fix this', 'any fix', 'stuck on', 'not loading', 'how do i', 'can someone help'
+    ])) {
       return baseEmbed(
         '#FF6B6B',
         '💬 Need Help?',
@@ -109,21 +104,13 @@ const AutoResponseRules: AutoResponseRule[] = [
     return null;
   },
 
-  
+  // 3. ANTI-VIRUS / SAFETY
   function (message) {
-    const msg = message;
+    const msg = message.toLowerCase();
     const looksAv = includesAny(msg, [
-      'is this a virus',
-      'is a virus',
-      'is this safe',
-      'is it safe',
-      'antivirus',
-      'anti-virus',
-      'defender',
-      'malware',
-      'trojan',
-      'miner',
-      'flagged'
+      'is this a virus', 'is a virus', 'is this safe', 'is it safe', 'antivirus', 'anti-virus',
+      'defender', 'malware', 'trojan', 'miner', 'flagged', 'false positive', 'falsepositive', 
+      'unsafe', 'rat', 'download safe', 'virus', 'threat', 'blocked', 'windows defender', 'avast', 'mcafee'
     ]);
 
     if (looksAv) {
@@ -150,18 +137,12 @@ const AutoResponseRules: AutoResponseRule[] = [
     return null;
   },
 
-  
+  // 4. REPORTING CHEATERS / APPEALS
   function (message) {
-    const msg = message;
+    const msg = message.toLowerCase();
     const wantsReport = includesAny(msg, [
-      'cheater',
-      'cheaters',
-      'hacker',
-      'hackers',
-      'report',
-      'report player',
-      'report cheater',
-      'cheat'
+      'cheater', 'cheaters', 'hacker', 'hackers', 'report', 'report player', 'report cheater', 
+      'cheat', 'cheating', 'aimbot', 'softaim', 'wallhack', 'hax', 'hacking', 'banned', 'ban this', 'exploit'
     ]);
 
     if (wantsReport) {
@@ -180,7 +161,7 @@ const AutoResponseRules: AutoResponseRule[] = [
         },
         {
           name: '🕊️ Appeal Ticket',
-          value: `If you were falsely reported: ${appealsChannelUrl}`
+          value: `If you were falsely reported/banned: ${appealsChannelUrl}`
         }
       );
     }
@@ -188,10 +169,13 @@ const AutoResponseRules: AutoResponseRule[] = [
     return null;
   },
 
-  
+  // 5. DONATIONS / CREATOR PROGRAM
   function (message) {
-    const msg = message;
-    if (includesAny(msg, ['donate', 'donation', 'support the project', 'support', 'creator program'])) {
+    const msg = message.toLowerCase();
+    if (includesAny(msg, [
+      'donate', 'donation', 'support the project', 'support', 'creator program', 'donating', 
+      'buy role', 'supporter', 'pay', 'paypal', 'crypto', 'patreon', 'cc code', 'creator code', 'sac'
+    ])) {
       return baseEmbed(
         '#2ECC71',
         '✨ Support / Donations',
@@ -206,4 +190,3 @@ const AutoResponseRules: AutoResponseRule[] = [
 ];
 
 export default AutoResponseRules;
-
